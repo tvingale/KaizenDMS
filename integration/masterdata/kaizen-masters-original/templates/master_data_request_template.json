@@ -1,0 +1,133 @@
+{
+  "master_data_request": {
+    "module_info": {
+      "module_name": "[YourModuleName]",
+      "module_version": "vX.Y.Z",
+      "requester": {
+        "name": "[Team Lead Name]",
+        "email": "[contact@email.com]",
+        "date": "[YYYY-MM-DD]"
+      },
+      "integration_type": "[direct_db_access|api_based|hybrid]"
+    },
+    "existing_masters_reviewed": {
+      "reviewed_date": "[YYYY-MM-DD]",
+      "reviewed_masters": [
+        {
+          "master_type": "[sites|areas|departments|customers|suppliers]",
+          "status": "[will_reuse|need_extension|not_suitable]",
+          "reuse_fields": ["field1", "field2", "field3"],
+          "missing_requirements": ["additional_field1", "additional_field2"],
+          "notes": "Explanation of how you'll use this master data"
+        }
+      ]
+    },
+    "new_masters_required": [
+      {
+        "master_type": "[new_master_name]",
+        "business_justification": "Why this master data is needed and which modules will use it",
+        "category": "[Organization & Identity|Business Partners|Process Management|Quality & Compliance|Other]",
+        "description": "Detailed description of what this master represents",
+        "estimated_records": 0,
+        "fields": [
+          {
+            "field_name": "code_field",
+            "data_type": "VARCHAR(20)",
+            "required": true,
+            "unique": true,
+            "description": "Unique identifier field",
+            "sample_values": ["CODE1", "CODE2", "CODE3"]
+          },
+          {
+            "field_name": "name_field", 
+            "data_type": "VARCHAR(100)",
+            "required": true,
+            "description": "Display name field",
+            "sample_values": ["Display Name 1", "Display Name 2"]
+          }
+        ],
+        "relationships": [
+          {
+            "related_master": "[existing_master_name]",
+            "relationship_type": "[one_to_one|one_to_many|many_to_many]",
+            "description": "How these masters relate to each other"
+          }
+        ],
+        "usage_context": {
+          "primary_use": "Main purpose of this master data",
+          "frequency": "How often it will be accessed",
+          "integration_points": ["Module1", "Module2", "Module3"]
+        }
+      }
+    ],
+    "master_extensions": [
+      {
+        "master_type": "[existing_master_to_extend]",
+        "extension_reason": "Why you need to add fields to existing master",
+        "new_fields": [
+          {
+            "field_name": "new_field_name",
+            "data_type": "VARCHAR(50)",
+            "required": false,
+            "description": "What this field represents",
+            "sample_values": ["value1", "value2"]
+          }
+        ],
+        "impact_assessment": {
+          "existing_data": "Impact on existing records",
+          "existing_modules": "Impact on other modules",
+          "migration_required": false
+        }
+      }
+    ],
+    "integration_requirements": {
+      "access_method": "[direct_db_access|api_based|hybrid]",
+      "permissions_needed": [
+        "master_type.view",
+        "master_type.create",
+        "master_type.edit"
+      ],
+      "real_time_sync": {
+        "required": true,
+        "trigger_events": ["create", "update", "delete"],
+        "notification_method": "[database_trigger|api_webhook|message_queue]"
+      },
+      "data_validation": {
+        "custom_validations": [
+          {
+            "field": "master_type.field_name",
+            "rule": "Validation rule description",
+            "validation_logic": "SQL or code logic for validation"
+          }
+        ]
+      }
+    },
+    "testing_plan": {
+      "test_data_volume": {
+        "master_type1": 0,
+        "master_type2": 0
+      },
+      "integration_tests": [
+        "Test case 1: Create master and verify in your module",
+        "Test case 2: Update master and verify sync",
+        "Test case 3: Delete master and verify cascade behavior"
+      ],
+      "performance_requirements": {
+        "max_response_time": "XXXms for operations",
+        "max_concurrent_users": 0,
+        "data_retention": "X years for audit trails"
+      }
+    },
+    "maintenance_plan": {
+      "rollback_strategy": {
+        "new_masters": "How to rollback new tables",
+        "extended_masters": "How to rollback field additions"
+      },
+      "ongoing_maintenance": {
+        "data_seeding": "Who provides initial/seed data",
+        "documentation": "Who maintains integration docs",
+        "support_contact": "contact@email.com"
+      }
+    }
+  }
+}

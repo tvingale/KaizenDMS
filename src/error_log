@@ -1,0 +1,26 @@
+[05-Sep-2025 16:27:25 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Undefined constant "KAIZENAUTH_BASE_URL" in /home3/kaizenap/public_html/doms/profile.php:155
+Stack trace:
+#0 {main}
+  thrown in /home3/kaizenap/public_html/doms/profile.php on line 155
+[05-Sep-2025 16:27:34 Asia/Kolkata] PHP Warning:  Undefined variable $pdo in /home3/kaizenap/public_html/doms/settings.php on line 343
+[05-Sep-2025 16:27:34 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in /home3/kaizenap/public_html/doms/settings.php:343
+Stack trace:
+#0 {main}
+  thrown in /home3/kaizenap/public_html/doms/settings.php on line 343
+[05-Sep-2025 16:27:42 Asia/Kolkata] PHP Warning:  Undefined variable $pdo in /home3/kaizenap/public_html/doms/settings.php on line 343
+[05-Sep-2025 16:27:42 Asia/Kolkata] PHP Fatal error:  Uncaught Error: Call to a member function query() on null in /home3/kaizenap/public_html/doms/settings.php:343
+Stack trace:
+#0 {main}
+  thrown in /home3/kaizenap/public_html/doms/settings.php on line 343
+[06-Sep-2025 00:25:09 Asia/Kolkata] KaizenAuth Access: {"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrZWFkbWluIiwidXNlcl9pZCI6MSwidXNlcm5hbWUiOiJrZWFkbWluIiwiZW1haWwiOiJhZG1pbkBrYWl6ZW5ncm91cC5jby5pbiIsIm1vYmlsZSI6Iis5MTkyNjA1NDU0NTQiLCJuYW1lIjoiQWRtaW4gS2FpemVuIiwicGljdHVyZSI6bnVsbCwiYXVkIjpudWxsLCJpYXQiOjE3NTcwOTg1MDcsImV4cCI6MTc1NzA5OTEwNywiaXNzIjoiYXV0aC5rYWl6ZW5hcHBzLmNvLmluIn0.EOhIvtk8sccIhbWQCX3vMROjBj8sy9Ly5zLJvqEq6dU","user_agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/139.0.0.0 Safari\/537.36","ip":"103.129.101.92"}
+[10-Sep-2025 01:54:26 Asia/Kolkata] KaizenAuth SSO - Request URI: /sso.php
+[10-Sep-2025 01:54:26 Asia/Kolkata] KaizenAuth SSO - GET params: Array
+(
+)
+
+[10-Sep-2025 01:54:26 Asia/Kolkata] KaizenAuth SSO - Session: Array
+(
+)
+
+[10-Sep-2025 01:54:26 Asia/Kolkata] KaizenAuth: Redirecting to login: https://auth.kaizenapps.co.in/index.php
+[10-Sep-2025 01:54:26 Asia/Kolkata] KaizenAuth: Return URL set: https://doms.kaizenapps.co.in/sso.php

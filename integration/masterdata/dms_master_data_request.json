@@ -1,0 +1,695 @@
+{
+  "master_data_request": {
+    "module_info": {
+      "module_name": "KaizenDMS",
+      "module_version": "v1.0.0", 
+      "requester": {
+        "name": "KaizenDMS Development Team",
+        "email": "dms-dev@kaizen.com",
+        "date": "2025-01-11"
+      },
+      "integration_type": "direct_db_access",
+      "validation_note": "PHASED IMPLEMENTATION - Phase 1 focuses on universal DMS functionality, specialized business rules moved to Phase 2+",
+      "implementation_approach": "Universal DMS core with external module integration points for specialized requirements"
+    },
+    "existing_masters_reviewed": {
+      "reviewed_date": "2025-01-11",
+      "validation_performed": true,
+      "reviewed_masters": [
+        {
+          "master_type": "sites",
+          "status": "will_reuse",
+          "reuse_fields": ["id", "name", "code", "address", "city", "state", "timezone", "is_active"],
+          "missing_requirements": [],
+          "notes": "Perfect fit for DMS document site assignments - Plot B-75 and G-44 locations"
+        },
+        {
+          "master_type": "departments", 
+          "status": "will_reuse",
+          "reuse_fields": ["id", "name", "code", "is_active"],
+          "missing_requirements": [],
+          "notes": "Will use for document ownership and approval workflows (QA, Manufacturing, etc.)"
+        },
+        {
+          "master_type": "customers",
+          "status": "will_reuse",
+          "reuse_fields": ["id", "name", "code", "customer_type", "is_active"],
+          "missing_requirements": [],
+          "notes": "Will use for basic customer identification. Customer-specific requirements handled by dedicated Customer Requirements Module."
+        },
+        {
+          "master_type": "suppliers",
+          "status": "will_reuse",
+          "reuse_fields": ["id", "name", "code", "supplier_type", "iso_certified", "iatf_certified"],
+          "missing_requirements": [],
+          "notes": "Required for supplier qualification documents and certifications"
+        },
+        {
+          "master_type": "areas",
+          "status": "not_suitable",
+          "reason": "Existing master_areas represents physical locations within sites, not functional process areas needed for DMS document classification",
+          "alternative_approach": "Create new master_process_areas for functional process classification",
+          "detailed_explanation": "master_areas contains site-specific physical locations (Welding Shop #1, Assembly Line #2) while DMS needs site-independent process classifications (Welding, Assembly, Quality Control) for document categorization and safety rules"
+        }
+      ]
+    },
+    "implementation_phases": {
+      "phase_1_immediate": {
+        "duration": "12 weeks", 
+        "scope": "Universal DMS functionality with WhatsApp integration",
+        "master_tables_needed": ["process_areas", "document_types", "languages", "review_cycles", "notification_templates", "notification_channels"],
+        "requirements_covered": ["B-1 to B-8", "E-1", "E-3", "E-7", "E-8", "E-9", "E-10", "G-2", "G-6", "G-7"],
+        "whatsapp_integration": {
+          "business_justification": "WhatsApp integration is critical for manufacturing environments where users need instant notifications for approvals and safety-critical documents",
+          "meta_approval_required": "All WhatsApp templates must be pre-approved by Meta Business Manager",
+          "supported_scenarios": ["approval_request", "approval_reminder", "document_released", "training_required", "review_due", "account_created", "password_reset"]
+        }
+      },
+      "phase_2_specialized": {
+        "duration": "8 weeks", 
+        "scope": "Specialized modules integration",
+        "master_tables_needed": ["Tables will be created by specialized modules when needed"],
+        "requirements_covered": ["E-2", "E-5", "E-6", "G-3", "G-5"], 
+        "implementation_approach": "External modules create their own master data tables",
+        "note": "No immediate master data request needed - each specialized module will manage its own tables"
+      },
+      "phase_3_advanced": {
+        "duration": "6 weeks",
+        "scope": "Advanced features",
+        "requirements_covered": ["E-4", "G-1", "G-4"],
+        "implementation_approach": "Enhancement modules"
+      }
+    },
+    "new_masters_required": [
+      {
+        "master_type": "process_areas",
+        "implementation_phase": "phase_1_immediate",
+        "business_justification": "CRITICAL - Universal process classification for document categorization across all organizations and industries. Cannot reuse existing master_areas as they represent physical locations, not functional processes.",
+        "category": "Process Management",
+        "description": "Site-independent process area classifications for document management and safety compliance",
+        "estimated_records": 12,
+        "fields": [
+          {
+            "field_name": "area_code",
+            "data_type": "VARCHAR(20)",
+            "required": true,
+            "unique": true,
+            "description": "Process area identifier (site-independent)",
+            "sample_values": ["WELD", "STITCH", "ASSY", "QC", "INSP", "PAINT", "MAINT", "SAFE"]
+          },
+          {
+            "field_name": "area_name",
+            "data_type": "VARCHAR(100)",
+            "required": true,
+            "description": "Process area display name",
+            "sample_values": ["Welding", "Stitching", "Assembly", "Quality Control", "Incoming Inspection"]
+          },
+          {
+            "field_name": "safety_critical_default",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": false,
+            "description": "Whether this process type typically involves safety-critical operations"
+          },
+          {
+            "field_name": "pso_oversight_required",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": false,
+            "description": "Whether PSO oversight is required for documents in this process area"
+          },
+          {
+            "field_name": "department_id",
+            "data_type": "INT",
+            "required": false,
+            "description": "Primary responsible department for this process area",
+            "sample_values": [1, 2, 3]
+          },
+          {
+            "field_name": "requires_special_training",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": false,
+            "description": "Whether processes in this area require specialized training certification"
+          }
+        ],
+        "relationships": [
+          {
+            "related_master": "departments",
+            "relationship_type": "many_to_one",
+            "description": "Process areas are primarily managed by specific departments"
+          }
+        ],
+        "usage_context": {
+          "primary_use": "Document classification, PSO rule triggering, safety gate enforcement",
+          "frequency": "Every document creation and content analysis",
+          "integration_points": ["DMS", "SafetyModule", "QualityModule", "TaskEngine"]
+        },
+        "distinction_from_areas": "This represents FUNCTIONAL processes (what type of work) while master_areas represents PHYSICAL locations (where the work happens). Both may be needed together for complete document context."
+      },
+      {
+        "master_type": "document_types", 
+        "implementation_phase": "phase_1_immediate",
+        "business_justification": "Universal document classification and auto-numbering required for any document management system. Core requirement B-1 and B-7.",
+        "category": "Process Management",
+        "description": "Document type definitions with auto-numbering templates and compliance requirements",
+        "estimated_records": 15,
+        "fields": [
+          {
+            "field_name": "type_code",
+            "data_type": "VARCHAR(20)",
+            "required": true,
+            "unique": true,
+            "description": "Unique document type identifier",
+            "sample_values": ["POL", "SOP", "WI", "PFMEA", "CP", "DWG", "FORM", "PPAP"]
+          },
+          {
+            "field_name": "type_name",
+            "data_type": "VARCHAR(100)",
+            "required": true,
+            "description": "Human readable document type name",
+            "sample_values": ["Policy", "Standard Operating Procedure", "Work Instruction", "Process FMEA"]
+          },
+          {
+            "field_name": "numbering_format",
+            "data_type": "VARCHAR(100)",
+            "required": true,
+            "description": "Auto-numbering template with placeholders",
+            "sample_values": ["POL-{YYYY}-{####}", "WI-{SITE}-{PROCESS}-{YYYY}-{####}"]
+          },
+          {
+            "field_name": "requires_pso",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": false,
+            "description": "Whether this document type requires Product Safety Officer approval"
+          },
+          {
+            "field_name": "retention_years",
+            "data_type": "INT",
+            "required": true,
+            "default_value": 3,
+            "description": "Retention period in years per ISO/IATF requirements"
+          },
+          {
+            "field_name": "is_safety_critical",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": false,
+            "description": "Whether documents of this type are safety-critical by default"
+          },
+          {
+            "field_name": "min_approval_levels",
+            "data_type": "INT",
+            "required": true,
+            "default_value": 1,
+            "description": "Minimum number of approval levels required"
+          }
+        ],
+        "relationships": [
+          {
+            "related_master": "process_areas",
+            "relationship_type": "many_to_many",
+            "description": "Document types can be used across multiple process areas"
+          }
+        ],
+        "usage_context": {
+          "primary_use": "Document creation, auto-numbering, compliance tracking",
+          "frequency": "Every document creation",
+          "integration_points": ["DMS", "QualityModule", "AuditModule"]
+        }
+      },
+      {
+        "master_type": "languages",
+        "implementation_phase": "phase_1_immediate", 
+        "business_justification": "Universal multilingual support required for any multi-site or international operations. Core requirement G-2.",
+        "category": "Organization & Identity",
+        "description": "Language support for multilingual documents and user interfaces",
+        "estimated_records": 5,
+        "fields": [
+          {
+            "field_name": "lang_code",
+            "data_type": "VARCHAR(5)",
+            "required": true,
+            "unique": true,
+            "description": "ISO language code",
+            "sample_values": ["en", "mr", "hi", "gu"]
+          },
+          {
+            "field_name": "lang_name",
+            "data_type": "VARCHAR(50)",
+            "required": true,
+            "description": "Language name in English",
+            "sample_values": ["English", "Marathi", "Hindi", "Gujarati"]
+          },
+          {
+            "field_name": "native_name",
+            "data_type": "VARCHAR(50)",
+            "required": false,
+            "description": "Language name in native script",
+            "sample_values": ["English", "मराठी", "हिन्दी", "ગુજરાતી"]
+          },
+          {
+            "field_name": "rtl_flag",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": false,
+            "description": "Right-to-left text direction flag"
+          },
+          {
+            "field_name": "is_default",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": false,
+            "description": "Default language for the system"
+          }
+        ],
+        "relationships": [],
+        "usage_context": {
+          "primary_use": "Document language assignment and UI localization",
+          "frequency": "Document creation and user preference setting",
+          "integration_points": ["DMS", "UserInterface", "ReportingModule"]
+        }
+      },
+      {
+        "master_type": "review_cycles",
+        "implementation_phase": "phase_1_immediate",
+        "business_justification": "Universal periodic review scheduling required for any compliance-based document management system. Core requirement E-7.",
+        "category": "Process Management",
+        "description": "Review cycle definitions for different document types and compliance requirements",
+        "estimated_records": 8,
+        "fields": [
+          {
+            "field_name": "cycle_code",
+            "data_type": "VARCHAR(20)",
+            "required": true,
+            "unique": true,
+            "description": "Review cycle identifier",
+            "sample_values": ["ANNUAL", "BIENNIAL", "QUARTERLY", "SAFETY_ANN"]
+          },
+          {
+            "field_name": "cycle_name",
+            "data_type": "VARCHAR(100)",
+            "required": true,
+            "description": "Human readable cycle name",
+            "sample_values": ["Annual Review", "Biennial Review", "Safety Annual Review"]
+          },
+          {
+            "field_name": "months",
+            "data_type": "INT",
+            "required": true,
+            "description": "Review frequency in months",
+            "sample_values": [12, 24, 3, 6]
+          },
+          {
+            "field_name": "reminder_days",
+            "data_type": "JSON",
+            "required": true,
+            "description": "Days before due date to send reminders",
+            "sample_values": ["[30, 7, 1]", "[60, 30, 7]"]
+          },
+          {
+            "field_name": "applicable_doc_types",
+            "data_type": "JSON",
+            "required": false,
+            "description": "Document types using this cycle",
+            "sample_values": ["[\"POL\", \"SOP\"]", "[\"PFMEA\", \"CP\", \"WI\"]"]
+          },
+          {
+            "field_name": "mandatory",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": true,
+            "description": "Whether review is mandatory or optional"
+          },
+          {
+            "field_name": "escalation_chain",
+            "data_type": "JSON",
+            "required": false,
+            "description": "Roles for escalation if review not completed",
+            "sample_values": ["[\"document_owner\", \"qa_manager\"]"]
+          }
+        ],
+        "relationships": [
+          {
+            "related_master": "document_types",
+            "relationship_type": "many_to_many",
+            "description": "Review cycles apply to multiple document types"
+          }
+        ],
+        "usage_context": {
+          "primary_use": "Automatic review scheduling and reminder generation",
+          "frequency": "Daily review cycle checks and periodic review assignments",
+          "integration_points": ["DMS", "TaskEngine", "NotificationModule"]
+        }
+      },
+      {
+        "master_type": "notification_templates",
+        "implementation_phase": "phase_1_immediate",
+        "business_justification": "WhatsApp and email notification templates for universal document management workflows. Critical for user engagement and approval response times.",
+        "category": "Communication Management",
+        "description": "Message templates for WhatsApp Business API and email notifications with Meta approval tracking",
+        "estimated_records": 25,
+        "fields": [
+          {
+            "field_name": "template_code",
+            "data_type": "VARCHAR(50)",
+            "required": true,
+            "unique": true,
+            "description": "Unique template identifier",
+            "sample_values": ["DOC_APPROVAL_REQ", "APPROVAL_REMINDER", "DOC_RELEASED", "TRAINING_REQUIRED"]
+          },
+          {
+            "field_name": "template_name",
+            "data_type": "VARCHAR(100)",
+            "required": true,
+            "description": "Human readable template name",
+            "sample_values": ["Document Approval Request", "Approval Reminder", "Document Released"]
+          },
+          {
+            "field_name": "scenario",
+            "data_type": "ENUM('approval_request','approval_reminder','document_released','training_required','review_due','account_created','password_reset')",
+            "required": true,
+            "description": "Notification scenario this template applies to"
+          },
+          {
+            "field_name": "channel",
+            "data_type": "ENUM('whatsapp','email','sms')",
+            "required": true,
+            "description": "Communication channel for this template"
+          },
+          {
+            "field_name": "language_code",
+            "data_type": "VARCHAR(5)",
+            "required": true,
+            "description": "ISO language code",
+            "sample_values": ["en", "mr", "hi", "gu"]
+          },
+          {
+            "field_name": "subject_template",
+            "data_type": "VARCHAR(200)",
+            "required": false,
+            "description": "Subject line template (for email)",
+            "sample_values": ["Document Approval Required: {{doc_number}}"]
+          },
+          {
+            "field_name": "message_template",
+            "data_type": "TEXT",
+            "required": true,
+            "description": "Message body template with variable placeholders",
+            "sample_values": ["Hello {{user_name}}, Document {{doc_number}} assigned for approval. Due: {{due_date}}"]
+          },
+          {
+            "field_name": "template_variables",
+            "data_type": "JSON",
+            "required": true,
+            "description": "Available variables for template substitution",
+            "sample_values": ["[\"user_name\", \"doc_number\", \"doc_title\", \"due_date\", \"submitter_name\"]"]
+          },
+          {
+            "field_name": "meta_approved",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": false,
+            "description": "Whether template is approved by Meta for WhatsApp Business API"
+          },
+          {
+            "field_name": "meta_template_id",
+            "data_type": "VARCHAR(100)",
+            "required": false,
+            "description": "Meta's approved template ID for WhatsApp API",
+            "sample_values": ["doc_approval_req_en", "reminder_overdue_mr"]
+          },
+          {
+            "field_name": "priority",
+            "data_type": "ENUM('low','medium','high','urgent')",
+            "required": true,
+            "default_value": "medium",
+            "description": "Message priority for delivery scheduling"
+          }
+        ],
+        "relationships": [
+          {
+            "related_master": "languages",
+            "relationship_type": "many_to_one",
+            "description": "Templates linked to supported languages"
+          }
+        ],
+        "usage_context": {
+          "primary_use": "WhatsApp and email notification delivery with template management",
+          "frequency": "Every notification sent (approvals, reminders, alerts)",
+          "integration_points": ["DMS", "NotificationService", "WhatsAppAPI", "EmailService"]
+        },
+        "meta_requirements": {
+          "whatsapp_templates": "Must be pre-approved by Meta before production use",
+          "template_categories": ["ACCOUNT_UPDATE", "PAYMENT_UPDATE", "APPOINTMENT_UPDATE"],
+          "approval_process": "Submit templates to Meta Business Manager for review"
+        }
+      },
+      {
+        "master_type": "notification_channels",
+        "implementation_phase": "phase_1_immediate", 
+        "business_justification": "Communication channel configuration for WhatsApp Business API, email SMTP, and SMS gateways. Essential for multi-channel notification delivery.",
+        "category": "Communication Management",
+        "description": "Configuration settings for various notification channels and their API endpoints",
+        "estimated_records": 8,
+        "fields": [
+          {
+            "field_name": "channel_code",
+            "data_type": "VARCHAR(20)",
+            "required": true,
+            "unique": true,
+            "description": "Channel identifier",
+            "sample_values": ["WHATSAPP_MAIN", "EMAIL_SMTP", "SMS_GATEWAY"]
+          },
+          {
+            "field_name": "channel_name",
+            "data_type": "VARCHAR(50)",
+            "required": true,
+            "description": "Human readable channel name",
+            "sample_values": ["WhatsApp Business API", "Email SMTP Server", "SMS Gateway"]
+          },
+          {
+            "field_name": "channel_type",
+            "data_type": "ENUM('whatsapp','email','sms','push')",
+            "required": true,
+            "description": "Type of communication channel"
+          },
+          {
+            "field_name": "api_endpoint",
+            "data_type": "VARCHAR(255)",
+            "required": false,
+            "description": "API endpoint URL for external services",
+            "sample_values": ["https://graph.facebook.com/v17.0/{{phone_number_id}}/messages"]
+          },
+          {
+            "field_name": "configuration",
+            "data_type": "JSON",
+            "required": true,
+            "description": "Channel-specific configuration parameters",
+            "sample_values": ["{\"phone_number_id\": \"123456789\", \"access_token\": \"encrypted_token\", \"rate_limit\": 1000}"]
+          },
+          {
+            "field_name": "is_active",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": true,
+            "description": "Whether channel is currently active"
+          },
+          {
+            "field_name": "priority_order",
+            "data_type": "INT",
+            "required": true,
+            "default_value": 1,
+            "description": "Priority order for fallback channels (1 = highest)"
+          },
+          {
+            "field_name": "rate_limit_per_minute",
+            "data_type": "INT",
+            "required": false,
+            "description": "Maximum messages per minute allowed by this channel",
+            "sample_values": [1000, 100, 50]
+          },
+          {
+            "field_name": "cost_per_message",
+            "data_type": "DECIMAL(10,4)",
+            "required": false,
+            "description": "Cost per message for budgeting and analytics",
+            "sample_values": [0.0055, 0.0001, 0.05]
+          }
+        ],
+        "relationships": [],
+        "usage_context": {
+          "primary_use": "Channel configuration and message routing for notifications",
+          "frequency": "Every notification delivery attempt",
+          "integration_points": ["DMS", "NotificationService", "WhatsAppAPI", "EmailService", "SMSGateway"]
+        },
+        "security_requirements": {
+          "encrypted_fields": ["configuration.access_token", "configuration.api_key"],
+          "access_control": "Only system administrators should modify channel configurations",
+          "audit_trail": "All configuration changes must be logged for security compliance"
+        }
+      }
+    ],
+    "master_extensions": [],
+    "customer_requirements_integration": {
+      "approach": "dedicated_module",
+      "rationale": "Customer requirements management is complex enough to warrant its own module rather than simple field extensions",
+      "integration_points": [
+        {
+          "dms_function": "document_creation",
+          "integration_method": "api_call",
+          "api_endpoint": "CustomerReq.getApplicableRequirements(customer_id, process_area, doc_type)",
+          "purpose": "Auto-tag documents with customer requirement flags"
+        },
+        {
+          "dms_function": "pso_gate_logic",
+          "integration_method": "api_call", 
+          "api_endpoint": "CustomerReq.hasRequirement(customer_id, requirement_type)",
+          "purpose": "Trigger additional PSO approvals based on customer requirements"
+        },
+        {
+          "dms_function": "ppap_generation",
+          "integration_method": "api_call",
+          "api_endpoint": "CustomerReq.getPPAPRequirements(customer_id)",
+          "purpose": "Generate customer-specific PPAP packages"
+        },
+        {
+          "dms_function": "document_numbering",
+          "integration_method": "api_call",
+          "api_endpoint": "CustomerReq.getNumberingRules(customer_id)",
+          "purpose": "Apply customer-specific document numbering prefixes"
+        },
+        {
+          "dms_function": "compliance_search",
+          "integration_method": "api_call",
+          "api_endpoint": "CustomerReq.getCustomersWithRequirements(requirements_array)",
+          "purpose": "Find customers with specific compliance requirements"
+        }
+      ],
+      "webhook_notifications": [
+        {
+          "event": "customer_requirement_updated",
+          "dms_action": "re_evaluate_affected_documents",
+          "purpose": "Update document compliance status when customer requirements change"
+        },
+        {
+          "event": "new_customer_requirement_added",
+          "dms_action": "trigger_review_cycle_for_existing_docs",
+          "purpose": "Ensure existing documents meet new customer requirements"
+        }
+      ]
+    },
+    "integration_requirements": {
+      "access_method": "direct_db_access",
+      "permissions_needed": [
+        "sites.view",
+        "departments.view",
+        "customers.view",
+        "suppliers.view",
+        "process_areas.view",
+        "process_areas.create",
+        "process_areas.edit",
+        "document_types.view",
+        "document_types.create",
+        "document_types.edit",
+        "languages.view",
+        "languages.create", 
+        "languages.edit",
+        "review_cycles.view",
+        "review_cycles.create", 
+        "review_cycles.edit",
+        "notification_templates.view",
+        "notification_templates.create",
+        "notification_templates.edit",
+        "notification_channels.view", 
+        "notification_channels.create",
+        "notification_channels.edit"
+      ],
+      "real_time_sync": {
+        "required": true,
+        "trigger_events": ["create", "update", "delete"],
+        "notification_method": "database_trigger"
+      },
+      "data_validation": {
+        "custom_validations": [
+          {
+            "field": "document_types.numbering_format",
+            "rule": "Must contain valid placeholders {YYYY} and {####}",
+            "validation_logic": "REGEXP_LIKE(numbering_format, '\\{YYYY\\}.*\\{#+\\}')"
+          },
+          {
+            "field": "psa_rules.condition_regex",
+            "rule": "Must be valid regex pattern",
+            "validation_logic": "Test regex compilation before saving"
+          },
+          {
+            "field": "review_cycles.months", 
+            "rule": "Must be between 1 and 120 months",
+            "validation_logic": "months >= 1 AND months <= 120"
+          },
+          {
+            "field": "process_areas.area_code",
+            "rule": "Must be unique and UPPERCASE",
+            "validation_logic": "area_code = UPPER(area_code) AND length >= 2"
+          }
+        ]
+      }
+    },
+    "testing_plan": {
+      "test_data_volume": {
+        "process_areas": 12,
+        "document_types": 15,
+        "languages": 4,
+        "review_cycles": 8,
+        "notification_templates": 25,
+        "notification_channels": 8
+      },
+      "integration_tests": [
+        "Test document classification using process_areas for functional classification",
+        "Create document_type and verify auto-numbering format works",
+        "Create review cycle and verify reminder task generation",
+        "Test Customer Requirements Module API integration for PPAP workflow",
+        "Verify language assignment in multilingual document creation",
+        "Test WhatsApp template message delivery with variable substitution",
+        "Verify Meta-approved templates work with WhatsApp Business API",
+        "Test notification channel failover (WhatsApp → Email → SMS)",
+        "Verify notification delivery tracking and status updates"
+      ],
+      "performance_requirements": {
+        "max_response_time": "100ms for read operations, 200ms for write operations",
+        "max_concurrent_users": 50,
+        "data_retention": "All audit trails for 7 years minimum"
+      },
+      "validation_tests": [
+        "Confirm process_areas are site-independent (one WELD record serves all sites)",
+        "Test document can reference both process_area AND physical area when needed",
+        "Verify WhatsApp templates work with Meta Business API",
+        "Test notification channel failover mechanisms"
+      ]
+    },
+    "maintenance_plan": {
+      "rollback_strategy": {
+        "new_masters": "All 6 Phase 1 tables can be dropped without affecting existing KaizenFlow modules - they are purely additive",
+        "customer_integration": "API-based integration with Customer Requirements Module - no database extensions needed"
+      },
+      "ongoing_maintenance": {
+        "data_seeding": "DMS team will provide comprehensive seed data for all new master types with proper process area classifications",
+        "documentation": "DMS team will maintain clear distinction between process_areas (functional) vs areas (physical) in all documentation",
+        "support_contact": "dms-dev@kaizen.com",
+        "update_procedures": "Changes to PSA rules and safety characteristics require PSO approval; process area changes require Manufacturing Engineering approval"
+      },
+      "migration_plan": {
+        "existing_documents": "Legacy documents will be bulk-imported with appropriate process_area assignments (not tied to physical locations)",
+        "user_training": "Training will emphasize distinction between process areas and physical areas",
+        "go_live_support": "DMS team will provide 24/7 support during initial rollout with focus on process area classification"
+      }
+    },
+    "validation_summary": {
+      "issue_identified": "Original request incorrectly attempted to extend master_areas table",
+      "resolution": "Created new master_process_areas table for functional process classification",
+      "impact": "Better data model separation, cleaner relationships, scalable design",
+      "lesson_learned": "Always validate existing master table purpose before assuming reusability"
+    }
+  }
+}

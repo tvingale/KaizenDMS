@@ -1,0 +1,272 @@
+{
+  "master_data_request": {
+    "module_info": {
+      "module_name": "KaizenTasks",
+      "module_version": "v2.1.0",
+      "requester": {
+        "name": "TaskModule Development Team",
+        "email": "tasks-dev@kaizen.com",
+        "date": "2025-01-15"
+      },
+      "integration_type": "direct_db_access"
+    },
+    "existing_masters_reviewed": {
+      "reviewed_date": "2025-01-15",
+      "reviewed_masters": [
+        {
+          "master_type": "sites",
+          "status": "need_extension",
+          "reuse_fields": ["id", "name", "code", "address", "timezone"],
+          "missing_requirements": ["operating_hours_start", "operating_hours_end", "shift_pattern"],
+          "notes": "Need operating hours for task scheduling optimization"
+        },
+        {
+          "master_type": "departments", 
+          "status": "will_reuse",
+          "reuse_fields": ["id", "name", "code", "description"],
+          "missing_requirements": [],
+          "notes": "Perfect for task assignment and escalation workflows"
+        },
+        {
+          "master_type": "users",
+          "status": "not_suitable",
+          "reason": "KaizenAuth already handles user management",
+          "alternative_approach": "Direct KaizenAuth API integration for user data"
+        }
+      ]
+    },
+    "new_masters_required": [
+      {
+        "master_type": "task_categories",
+        "business_justification": "Standardize task categorization across TaskEngine, QualityModule, MaintenanceModule, and AuditModule",
+        "category": "Process Management",
+        "description": "Categories for different types of tasks with default priorities and escalation rules",
+        "estimated_records": 25,
+        "fields": [
+          {
+            "field_name": "category_code",
+            "data_type": "VARCHAR(20)",
+            "required": true,
+            "unique": true,
+            "description": "Unique category identifier",
+            "sample_values": ["MAINT", "QUAL", "PROD", "SAFE", "AUDIT"]
+          },
+          {
+            "field_name": "category_name", 
+            "data_type": "VARCHAR(100)",
+            "required": true,
+            "description": "Human readable category name",
+            "sample_values": ["Maintenance Tasks", "Quality Control", "Production Support"]
+          },
+          {
+            "field_name": "default_priority",
+            "data_type": "ENUM('Low','Medium','High','Critical')",
+            "required": true,
+            "default_value": "Medium",
+            "description": "Default priority for new tasks in this category"
+          },
+          {
+            "field_name": "escalation_time_hours",
+            "data_type": "INT",
+            "required": true,
+            "default_value": 24,
+            "description": "Hours before automatic escalation"
+          },
+          {
+            "field_name": "requires_approval",
+            "data_type": "BOOLEAN",
+            "required": true,
+            "default_value": false,
+            "description": "Whether tasks need approval before execution"
+          },
+          {
+            "field_name": "estimated_duration_hours",
+            "data_type": "DECIMAL(5,2)",
+            "required": false,
+            "description": "Default estimated completion time"
+          }
+        ],
+        "relationships": [
+          {
+            "related_master": "departments",
+            "relationship_type": "many_to_many",
+            "description": "Categories can be used by multiple departments",
+            "junction_table": "task_category_departments"
+          }
+        ],
+        "usage_context": {
+          "primary_use": "Task creation, classification, and routing",
+          "frequency": "Every task creation (estimated 1000+ daily)",
+          "integration_points": ["TaskEngine", "QualityModule", "MaintenanceModule", "AuditModule"]
+        }
+      },
+      {
+        "master_type": "task_priorities",
+        "business_justification": "Standardize priority levels across all task types",
+        "category": "Process Management",
+        "description": "Priority levels with escalation rules and SLA definitions",
+        "estimated_records": 10,
+        "fields": [
+          {
+            "field_name": "priority_code",
+            "data_type": "VARCHAR(10)",
+            "required": true,
+            "unique": true,
+            "description": "Priority identifier",
+            "sample_values": ["LOW", "MED", "HIGH", "CRIT", "EMRG"]
+          },
+          {
+            "field_name": "priority_name",
+            "data_type": "VARCHAR(50)", 
+            "required": true,
+            "description": "Display name",
+            "sample_values": ["Low Priority", "Critical Issue", "Emergency"]
+          },
+          {
+            "field_name": "response_time_hours",
+            "data_type": "INT",
+            "required": true,
+            "description": "Required initial response time"
+          },
+          {
+            "field_name": "resolution_time_hours",
+            "data_type": "INT",
+            "required": true,
+            "description": "Required resolution time"
+          },
+          {
+            "field_name": "color_code",
+            "data_type": "VARCHAR(7)",
+            "required": false,
+            "description": "Hex color for UI display",
+            "sample_values": ["#28a745", "#ffc107", "#dc3545"]
+          }
+        ],
+        "relationships": [],
+        "usage_context": {
+          "primary_use": "Task priority assignment and SLA tracking",
+          "frequency": "Every task creation and update",
+          "integration_points": ["TaskEngine", "QualityModule", "MaintenanceModule"]
+        }
+      }
+    ],
+    "master_extensions": [
+      {
+        "master_type": "sites",
+        "extension_reason": "Need operational data for intelligent task scheduling",
+        "new_fields": [
+          {
+            "field_name": "operating_hours_start",
+            "data_type": "TIME",
+            "required": false,
+            "description": "Site operational start time",
+            "sample_values": ["06:00:00", "08:00:00"]
+          },
+          {
+            "field_name": "operating_hours_end", 
+            "data_type": "TIME",
+            "required": false,
+            "description": "Site operational end time",
+            "sample_values": ["18:00:00", "22:00:00"]
+          },
+          {
+            "field_name": "shift_pattern",
+            "data_type": "ENUM('Single','Double','Triple','Continuous')",
+            "required": false,
+            "default_value": "Single",
+            "description": "Number of shifts operating"
+          },
+          {
+            "field_name": "weekend_operations",
+            "data_type": "BOOLEAN",
+            "required": false,
+            "default_value": false,
+            "description": "Whether site operates on weekends"
+          }
+        ],
+        "impact_assessment": {
+          "existing_data": "All new fields nullable - no impact on existing records",
+          "existing_modules": "No breaking changes - fields are optional",
+          "migration_required": false
+        }
+      }
+    ],
+    "integration_requirements": {
+      "access_method": "direct_db_access",
+      "permissions_needed": [
+        "sites.view",
+        "sites.edit",
+        "departments.view", 
+        "task_categories.view",
+        "task_categories.create",
+        "task_categories.edit",
+        "task_priorities.view",
+        "task_priorities.create",
+        "task_priorities.edit"
+      ],
+      "real_time_sync": {
+        "required": true,
+        "trigger_events": ["create", "update", "delete"],
+        "notification_method": "database_trigger"
+      },
+      "data_validation": {
+        "custom_validations": [
+          {
+            "field": "task_categories.escalation_time_hours",
+            "rule": "Must be between 1 and 168 hours (1 week max)",
+            "validation_logic": "value >= 1 AND value <= 168"
+          },
+          {
+            "field": "task_priorities.response_time_hours",
+            "rule": "Response time must be less than resolution time",
+            "validation_logic": "response_time_hours < resolution_time_hours"
+          }
+        ]
+      }
+    },
+    "testing_plan": {
+      "test_data_volume": {
+        "task_categories": 25,
+        "task_priorities": 10,
+        "extended_sites": 5
+      },
+      "integration_tests": [
+        "Create task category and verify availability in TaskEngine",
+        "Update site operating hours and verify task scheduling impact",
+        "Delete task category and verify cascade/cleanup behavior",
+        "Test permission enforcement for each new resource",
+        "Validate escalation time calculations with new priorities"
+      ],
+      "performance_requirements": {
+        "max_response_time": "100ms for category/priority lookups",
+        "max_concurrent_users": 100,
+        "data_retention": "All audit trails for 7 years minimum"
+      },
+      "rollback_testing": [
+        "Verify system function if new tables are dropped",
+        "Test backward compatibility during phased rollout"
+      ]
+    },
+    "maintenance_plan": {
+      "rollback_strategy": {
+        "new_masters": "Can be dropped - TaskModule will fall back to internal categories",
+        "extended_masters": "New fields can be dropped without affecting existing functionality",
+        "data_backup": "Full export before deployment, incremental after"
+      },
+      "ongoing_maintenance": {
+        "data_seeding": "TaskModule will provide initial seed data for categories and priorities",
+        "documentation": "TaskModule team will maintain integration documentation",
+        "support_contact": "tasks-dev@kaizen.com",
+        "monitoring": "Will implement health checks for master data dependencies"
+      },
+      "future_evolution": {
+        "planned_enhancements": [
+          "Add task_templates master for common task patterns",
+          "Extend categories with workflow definitions",
+          "Add integration with calendar systems for better scheduling"
+        ],
+        "deprecation_plan": "Internal TaskModule categories to be phased out over 3 months post-deployment"
+      }
+    }
+  }
+}
