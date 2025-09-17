@@ -1,0 +1,295 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kaizen UI/UX — Visual Cheat Sheet</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Segoe UI is system font on Windows; fallbacks provided -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    :root{
+      --brand-primary:#C53A3A;
+      --brand-primary-dark:#A72E2E;
+      --neutral-100:#F6F7F8;
+      --neutral-300:#E6E9EC;
+      --neutral-600:#6B7280;
+      --text-default:#111827;
+      --white:#FFFFFF;
+
+      --success:#16A34A;
+      --warning:#F59E0B;
+      --error:#DC2626;
+      --info:#2563EB;
+      --pending:#9CA3AF;
+
+      --radius-sm:6px;
+      --radius-md:8px;
+      --radius-lg:12px;
+      --shadow-soft:0 6px 18px rgba(16,24,40,0.06);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      color:var(--text-default);
+      background:var(--neutral-100);
+      line-height:1.5;
+    }
+    header{
+      position:sticky; top:0;
+      background:#fff; box-shadow:var(--shadow-soft);
+      padding:16px 20px; z-index:10;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:600}
+    .top-actions{display:flex; gap:10px; align-items:center}
+    .pill{padding:6px 10px; border-radius:999px; background:var(--neutral-300); font-size:12px}
+
+    .wrap{max-width:1200px; margin:24px auto; padding:0 20px; display:grid; gap:20px}
+    section{background:#fff; border-radius:16px; box-shadow:var(--shadow-soft); padding:20px}
+    h2{margin:0 0 10px 0; font-size:22px}
+    h3{margin:16px 0 8px; font-size:18px}
+    p.small{color:var(--neutral-600); font-size:14px; margin:6px 0 0}
+
+    .grid{display:grid; gap:14px}
+    .grid.cols-2{grid-template-columns:repeat(2, minmax(0,1fr))}
+    .grid.cols-3{grid-template-columns:repeat(3, minmax(0,1fr))}
+    .grid.cols-4{grid-template-columns:repeat(4, minmax(0,1fr))}
+    .grid.cols-5{grid-template-columns:repeat(5, minmax(0,1fr))}
+    @media (max-width:900px){ .grid.cols-4,.grid.cols-5{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:600px){ .grid.cols-2,.grid.cols-3{grid-template-columns:1fr} }
+
+    /* Color swatch */
+    .swatch{
+      border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;
+    }
+    .swatch .chip{height:64px}
+    .swatch .meta{padding:10px; font-size:13px; display:flex; justify-content:space-between; gap:8px}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+
+    /* Buttons */
+    .row{display:flex; flex-wrap:wrap; gap:10px}
+    .btn{border:0; cursor:pointer; border-radius:12px; padding:10px 16px; font-weight:600; box-shadow:var(--shadow-soft);}
+    .btn:focus{outline:3px solid rgba(197,58,58,.25)}
+    .btn-primary{background:var(--brand-primary); color:#fff}
+    .btn-primary:hover{background:var(--brand-primary-dark)}
+    .btn-secondary{background:#fff; color:var(--text-default); border:1px solid var(--neutral-300)}
+    .btn-tertiary{background:transparent; color:var(--brand-primary); box-shadow:none; padding:8px 10px}
+    .btn-icon{display:inline-flex; align-items:center; gap:8px}
+
+    /* Badges */
+    .badge{display:inline-block; padding:6px 10px; border-radius:999px; color:#fff; font-size:12px; font-weight:600}
+    .bg-success{background:var(--success)}
+    .bg-warning{background:var(--warning); color:#1f2937}
+    .bg-error{background:var(--error)}
+    .bg-pending{background:var(--pending)}
+
+    /* Form */
+    .field{margin-bottom:14px}
+    label{display:block; font-weight:600; margin-bottom:6px}
+    .input, .select{
+      width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--neutral-300); background:#fff;
+    }
+    .input:focus, .select:focus{outline:3px solid rgba(37,99,235,.25)}
+    .hint{font-size:12px; color:var(--neutral-600)}
+    .error{color:var(--error); font-size:12px; margin-top:6px}
+    .invalid{border-color:var(--error)}
+
+    /* Cards */
+    .card{border-radius:16px; box-shadow:var(--shadow-soft); padding:16px; background:#fff}
+
+    /* Spacing scale demo */
+    .spacer-demo{display:flex; gap:10px; flex-wrap:wrap}
+    .spacer{background:var(--neutral-300); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#374151}
+    .s-4{width:4px; height:24px}
+    .s-8{width:8px; height:24px}
+    .s-12{width:12px; height:24px}
+    .s-16{width:16px; height:24px}
+    .s-24{width:24px; height:24px}
+    .s-32{width:32px; height:24px}
+    .s-40{width:40px; height:24px}
+
+    /* Mini layout mock */
+    .layout{
+      display:grid; grid-template-columns:240px 1fr; gap:16px;
+    }
+    .sidebar{background:#fff; border-radius:12px; padding:12px; box-shadow:var(--shadow-soft)}
+    .nav-item{padding:8px 10px; border-radius:8px; display:flex; align-items:center; gap:8px; color:#374151}
+    .nav-item.active{background:var(--neutral-300); font-weight:600}
+    .content{display:grid; gap:16px}
+    .kpi{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px}
+    @media (max-width:900px){ .layout{grid-template-columns:1fr} .kpi{grid-template-columns:1fr} }
+
+    .kpi .card{display:flex; align-items:center; justify-content:space-between}
+    .muted{color:var(--neutral-600); font-size:13px}
+    .code{background:#111827; color:#e5e7eb; padding:10px 12px; border-radius:12px; font-size:13px; overflow:auto}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div style="width:28px;height:28px;border-radius:8px;background:var(--brand-primary)"></div>
+      <span>Kaizen — Visual Cheat Sheet</span>
+    </div>
+    <div class="top-actions">
+      <span class="pill">Segoe UI</span>
+      <span class="pill">Design Tokens</span>
+    </div>
+  </header>
+
+  <div class="wrap">
+
+    <section>
+      <h2>Color Tokens</h2>
+      <p class="small">Corporate palette + semantic status colors (HEX). Shades are soothing, not harsh.</p>
+      <div class="grid cols-5">
+        <div class="swatch">
+          <div class="chip" style="background:var(--brand-primary)"></div>
+          <div class="meta"><span>Kaizen Red</span><span class="mono">#C53A3A</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background:var(--brand-primary-dark)"></div>
+          <div class="meta"><span>Red / Hover</span><span class="mono">#A72E2E</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background:var(--neutral-100)"></div>
+          <div class="meta"><span>Grey Light</span><span class="mono">#F6F7F8</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background:var(--neutral-300)"></div>
+          <div class="meta"><span>Grey Surface</span><span class="mono">#E6E9EC</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background:var(--text-default)"></div>
+          <div class="meta"><span>Text</span><span class="mono">#111827</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background:var(--success)"></div>
+          <div class="meta"><span>Success</span><span class="mono">#16A34A</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background:var(--warning)"></div>
+          <div class="meta"><span>Warning</span><span class="mono">#F59E0B</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background:var(--error)"></div>
+          <div class="meta"><span>Error</span><span class="mono">#DC2626</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background:var(--info)"></div>
+          <div class="meta"><span>Info</span><span class="mono">#2563EB</span></div>
+        </div>
+        <div class="swatch">
+          <div class="chip" style="background:var(--pending)"></div>
+          <div class="meta"><span>Pending</span><span class="mono">#9CA3AF</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid cols-2">
+      <div>
+        <h2>Typography</h2>
+        <h1 style="margin:.25em 0 0;font-size:28px">H1 — Page Title</h1>
+        <div class="muted">Segoe UI • 28px • Bold</div>
+        <h2 style="margin:.75em 0 0;font-size:22px">H2 — Section Title</h2>
+        <div class="muted">Segoe UI • 22px • Semibold</div>
+        <h3 style="margin:.75em 0 0;font-size:18px">H3 — Subheader</h3>
+        <div class="muted">Segoe UI • 18px • Semibold</div>
+        <p>Body — 16px regular. Keep copy concise and actionable.</p>
+        <p class="small">Small — 14px. Use for hints and helper text.</p>
+      </div>
+      <div>
+        <h2>Buttons</h2>
+        <div class="row">
+          <button class="btn btn-primary btn-icon"><i class="fa-solid fa-check"></i>Primary (Save)</button>
+          <button class="btn btn-secondary btn-icon"><i class="fa-regular fa-circle"></i>Secondary</button>
+          <button class="btn btn-tertiary btn-icon">Tertiary link</button>
+        </div>
+        <h3>Badges (Statuses)</h3>
+        <div class="row">
+          <span class="badge bg-success">Completed</span>
+          <span class="badge bg-warning">In&nbsp;Progress</span>
+          <span class="badge bg-error">Failed</span>
+          <span class="badge bg-pending">Pending</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid cols-2">
+      <div>
+        <h2>Form & Validation</h2>
+        <div class="field">
+          <label for="frame">Frame ID</label>
+          <input id="frame" class="input" placeholder="SL532401A001">
+          <div class="hint">Scan or type. Must be unique.</div>
+        </div>
+        <div class="field">
+          <label for="torque">Anchorage Torque (Nm)</label>
+          <input id="torque" class="input invalid" placeholder="e.g., 25.0">
+          <div class="error">Torque must be between 23–27 Nm</div>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary btn-icon"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+          <button class="btn btn-secondary">Save Draft</button>
+        </div>
+      </div>
+      <div>
+        <h2>Spacing Scale</h2>
+        <p class="small">Base unit = 4px. Use these steps for padding/margins.</p>
+        <div class="spacer-demo">
+          <div class="spacer s-4">4</div>
+          <div class="spacer s-8">8</div>
+          <div class="spacer s-12">12</div>
+          <div class="spacer s-16">16</div>
+          <div class="spacer s-24">24</div>
+          <div class="spacer s-32">32</div>
+          <div class="spacer s-40">40</div>
+        </div>
+        <h3>Card Example</h3>
+        <div class="card">
+          <div class="muted">Open PDIs</div>
+          <div style="font-size:28px; font-weight:700">24</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Mini Layout (Hybrid Navigation)</h2>
+      <div class="layout">
+        <div class="sidebar">
+          <div class="nav-item active"><i class="fa-solid fa-gauge"></i> Dashboard</div>
+          <div class="nav-item"><i class="fa-solid fa-table-list"></i> PDIs</div>
+          <div class="nav-item"><i class="fa-solid fa-tags"></i> Incoming Belts</div>
+          <div class="nav-item"><i class="fa-solid fa-gears"></i> ECN</div>
+        </div>
+        <div class="content">
+          <div class="kpi">
+            <div class="card"><div><div class="muted">Pass Rate</div><div style="font-size:24px;font-weight:700">92%</div></div><span class="badge bg-success">Up</span></div>
+            <div class="card"><div><div class="muted">Escalations</div><div style="font-size:24px;font-weight:700">2</div></div><span class="badge bg-error">Critical</span></div>
+            <div class="card"><div><div class="muted">Pending Belts</div><div style="font-size:24px;font-weight:700">6</div></div><span class="badge bg-warning">Action</span></div>
+          </div>
+          <div class="card">
+            <h3 style="margin:0 0 8px">Example Code Snippet</h3>
+            <div class="code"><pre><code>&lt;span class="badge bg-success"&gt;Completed&lt;/span&gt;</code></pre></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Usage Rules (Quick)</h2>
+      <ul>
+        <li>Top bar is global; left sidebar is module-specific and collapsible.</li>
+        <li>Primary actions use brand red; only one primary per page.</li>
+        <li>Statuses use colored badges with contrasting text.</li>
+        <li>Filters are hidden behind a “Filter” button/panel.</li>
+        <li>Spinners for loading; toasts for light success; inline banners for critical changes.</li>
+        <li>Empty states: minimal by default; add guidance only when action is required.</li>
+      </ul>
+    </section>
+
+  </div>
+</body>
+</html>

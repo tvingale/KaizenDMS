@@ -193,17 +193,17 @@ require_once '../includes/header.php';
                                         </span>
                                     </td>
                                     <td>
-                                        <div class="btn-group" role="group">
+                                        <div class="admin-button-group">
                                             <button type="button" class="btn btn-sm btn-outline-primary" 
                                                     onclick="editCategory(<?= htmlspecialchars(json_encode($category)) ?>)">
                                                 Edit
                                             </button>
                                             <?php if ($category['is_active']): ?>
-                                            <form method="POST" style="display: inline;">
+                                            <form method="POST" class="d-inline-flex">
                                                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['dms_csrf_token'] ?>">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="category_id" value="<?= $category['id'] ?>">
-                                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
                                                         onclick="return confirm('Are you sure you want to deactivate this category?')">
                                                     Deactivate
                                                 </button>
@@ -299,7 +299,7 @@ require_once '../includes/header.php';
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="color">Color</label>
-                                <input type="color" class="form-control" id="color" name="color" value="#007bff">
+                                <input type="color" class="form-control" id="color" name="color" value="#C53A3A">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -351,7 +351,7 @@ require_once '../includes/header.php';
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="edit_color">Color</label>
-                                <input type="color" class="form-control" id="edit_color" name="color">
+                                <input type="color" class="form-control" id="edit_color" name="color" value="#C53A3A">
                             </div>
                         </div>
                         <div class="col-md-6">

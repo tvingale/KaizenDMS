@@ -122,41 +122,41 @@ require_once '../includes/header.php';
                         
                         <div class="form-group">
                             <label><strong>Export Format:</strong></label>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="format_csv" name="format" value="csv" class="custom-control-input" checked>
-                                <label class="custom-control-label" for="format_csv">CSV (Comma Separated Values)</label>
+                            <div class="form-check">
+                                <input type="radio" id="format_csv" name="format" value="csv" class="form-check-input" checked>
+                                <label class="form-check-label" for="format_csv">CSV (Comma Separated Values)</label>
                             </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="format_json" name="format" value="json" class="custom-control-input">
-                                <label class="custom-control-label" for="format_json">JSON (JavaScript Object Notation)</label>
+                            <div class="form-check">
+                                <input type="radio" id="format_json" name="format" value="json" class="form-check-input">
+                                <label class="form-check-label" for="format_json">JSON (JavaScript Object Notation)</label>
                             </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="format_excel" name="format" value="excel" class="custom-control-input">
-                                <label class="custom-control-label" for="format_excel">Excel (.xlsx)</label>
+                            <div class="form-check">
+                                <input type="radio" id="format_excel" name="format" value="excel" class="form-check-input">
+                                <label class="form-check-label" for="format_excel">Excel (.xlsx)</label>
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label><strong>Data to Export:</strong></label>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="export_entities" name="export_data[]" value="entities" checked>
-                                <label class="custom-control-label" for="export_entities">documents (<?= $stats['total_entities'] ?> records)</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="export_entities" name="export_data[]" value="entities" checked>
+                                <label class="form-check-label" for="export_entities">documents (<?= $stats['total_entities'] ?> records)</label>
                             </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="export_categories" name="export_data[]" value="categories" checked>
-                                <label class="custom-control-label" for="export_categories">Categories (<?= $stats['total_categories'] ?> records)</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="export_categories" name="export_data[]" value="categories" checked>
+                                <label class="form-check-label" for="export_categories">Categories (<?= $stats['total_categories'] ?> records)</label>
                             </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="export_users" name="export_data[]" value="users">
-                                <label class="custom-control-label" for="export_users">User Access Records (<?= $stats['total_users'] ?> records)</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="export_users" name="export_data[]" value="users">
+                                <label class="form-check-label" for="export_users">User Access Records (<?= $stats['total_users'] ?> records)</label>
                             </div>
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="export_activity" name="export_data[]" value="activity">
-                                <label class="custom-control-label" for="export_activity">Activity Log (for audit purposes)</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="export_activity" name="export_data[]" value="activity">
+                                <label class="form-check-label" for="export_activity">Activity Log (for audit purposes)</label>
                             </div>
                         </div>
                         
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-primary">
                             <i class="fas fa-download"></i> Export Data
                         </button>
                     </form>
@@ -214,21 +214,21 @@ require_once '../includes/header.php';
                         
                         <div class="form-group">
                             <label><strong>Import Options:</strong></label>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="mode_add" name="import_mode" value="add" class="custom-control-input" checked>
-                                <label class="custom-control-label" for="mode_add">Add new records only (skip duplicates)</label>
+                            <div class="form-check">
+                                <input type="radio" id="mode_add" name="import_mode" value="add" class="form-check-input" checked>
+                                <label class="form-check-label" for="mode_add">Add new records only (skip duplicates)</label>
                             </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="mode_update" name="import_mode" value="update" class="custom-control-input">
-                                <label class="custom-control-label" for="mode_update">Update existing records</label>
+                            <div class="form-check">
+                                <input type="radio" id="mode_update" name="import_mode" value="update" class="form-check-input">
+                                <label class="form-check-label" for="mode_update">Update existing records</label>
                             </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="mode_replace" name="import_mode" value="replace" class="custom-control-input">
-                                <label class="custom-control-label" for="mode_replace">Replace all data (dangerous!)</label>
+                            <div class="form-check">
+                                <input type="radio" id="mode_replace" name="import_mode" value="replace" class="form-check-input">
+                                <label class="form-check-label" for="mode_replace">Replace all data (dangerous!)</label>
                             </div>
                         </div>
                         
-                        <button type="submit" class="btn btn-warning">
+                        <button type="submit" class="btn btn-secondary">
                             <i class="fas fa-upload"></i> Import Data
                         </button>
                     </form>

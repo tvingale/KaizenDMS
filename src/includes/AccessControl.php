@@ -2,17 +2,37 @@
 /**
  * Unified Access Control System
  * Single flow: KaizenAuth → Module Access Check → RBAC
- * COPIED EXACTLY FROM KaizenTasks
+ * Enhanced with AdditivePermissionManager integration
  */
 
 class AccessControl {
     private $db;
     private $user;
     private $userAccess = null;
+    private $permissionManager = null;  // New RBAC system integration
     
     public function __construct($db, $user) {
         $this->db = $db;
         $this->user = $user;
+        
+        // Initialize new RBAC system with error handling
+        $this->initializePermissionManager();
+    }
+    
+    /**
+     * Initialize AdditivePermissionManager with fallback handling
+     */
+    private function initializePermissionManager() {
+        try {
+            if (file_exists(__DIR__ . '/AdditivePermissionManager.php')) {
+                require_once __DIR__ . '/AdditivePermissionManager.php';
+                $this->permissionManager = new AdditivePermissionManager($this->db);
+            }
+        } catch (Exception $e) {
+            // Log error but continue with legacy system
+            error_log("AccessControl: Failed to initialize AdditivePermissionManager: " . $e->getMessage());
+            $this->permissionManager = null;
+        }
     }
     
     /**
@@ -76,8 +96,27 @@ class AccessControl {
     
     /**
      * Check specific permissions by permission name
+     * Enhanced with new RBAC system and fallback to legacy
      */
     public function hasPermission($permissionName) {
+        // Try new RBAC system first
+        if ($this->permissionManager) {
+            try {
+                return $this->permissionManager->hasPermission($this->user['id'], $permissionName);
+            } catch (Exception $e) {
+                // Log error and fall back to legacy system
+                error_log("AccessControl: New RBAC failed for '$permissionName', using legacy: " . $e->getMessage());
+            }
+        }
+        
+        // Legacy permission checking (original code preserved)
+        return $this->hasPermissionLegacy($permissionName);
+    }
+    
+    /**
+     * Legacy permission checking method (preserved for fallback)
+     */
+    private function hasPermissionLegacy($permissionName) {
         $this->loadUserAccess();
         if (!$this->userAccess) return false;
         
@@ -97,7 +136,62 @@ class AccessControl {
     }
     
     /**
-     * Check specific permissions (legacy methods)
+     * Enhanced RBAC Methods (New)
+     */
+    
+    /**
+     * Check permission with scope (new RBAC feature)
+     */
+    public function hasPermissionWithScope($permissionName, $requiredScope = null, $context = 'default') {
+        if ($this->permissionManager) {
+            try {
+                return $this->permissionManager->hasPermission($this->user['id'], $permissionName, $requiredScope, $context);
+            } catch (Exception $e) {
+                error_log("AccessControl: Scope permission check failed, using legacy: " . $e->getMessage());
+            }
+        }
+        
+        // Fallback to basic permission check
+        return $this->hasPermissionLegacy($permissionName);
+    }
+    
+    /**
+     * Get user's effective permissions (new RBAC feature)
+     */
+    public function getEffectivePermissions($context = 'default') {
+        if ($this->permissionManager) {
+            try {
+                return $this->permissionManager->calculateEffectivePermissions($this->user['id'], $context);
+            } catch (Exception $e) {
+                error_log("AccessControl: Failed to get effective permissions: " . $e->getMessage());
+            }
+        }
+        
+        return []; // Graceful fallback
+    }
+    
+    /**
+     * Invalidate permission cache (new RBAC feature)
+     */
+    public function invalidatePermissionCache() {
+        if ($this->permissionManager) {
+            try {
+                $this->permissionManager->invalidateUserCache($this->user['id']);
+            } catch (Exception $e) {
+                error_log("AccessControl: Failed to invalidate cache: " . $e->getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Check if new RBAC system is available
+     */
+    public function isNewRBACAvailable() {
+        return $this->permissionManager !== null;
+    }
+    
+    /**
+     * Check specific permissions (legacy methods preserved)
      */
     public function canManageUsers() {
         return $this->hasPermission('users.manage');
@@ -300,6 +394,11 @@ class AccessControl {
             throw $e;
         }
     }
+    
+    /**
+     * Enhanced RBAC Methods (New Integration) - DUPLICATE SECTION REMOVED
+     * Original methods are implemented earlier in this file (lines 145-191)
+     */
 }
 
 /**

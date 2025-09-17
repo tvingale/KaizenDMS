@@ -172,28 +172,28 @@ require_once '../includes/header.php';
                     </div>
                     <div class="admin-card-body">
                         <div class="form-group">
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="enable_notifications" 
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="enable_notifications"
                                        name="enable_notifications" <?= $settings['enable_notifications'] ? 'checked' : '' ?>>
-                                <label class="custom-control-label" for="enable_notifications">Enable Notifications</label>
+                                <label class="form-check-label" for="enable_notifications">Enable Notifications</label>
                             </div>
                             <small class="form-text text-muted">Send notifications for document updates</small>
                         </div>
                         
                         <div class="form-group">
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="auto_assign" 
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="auto_assign"
                                        name="auto_assign" <?= $settings['auto_assign'] ? 'checked' : '' ?>>
-                                <label class="custom-control-label" for="auto_assign">Auto-assign documents</label>
+                                <label class="form-check-label" for="auto_assign">Auto-assign documents</label>
                             </div>
                             <small class="form-text text-muted">Automatically assign documents to available users</small>
                         </div>
                         
                         <div class="form-group">
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" class="custom-control-input" id="require_approval" 
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="require_approval"
                                        name="require_approval" <?= $settings['require_approval'] ? 'checked' : '' ?>>
-                                <label class="custom-control-label" for="require_approval">Require Approval</label>
+                                <label class="form-check-label" for="require_approval">Require Approval</label>
                             </div>
                             <small class="form-text text-muted">Require admin approval for certain actions</small>
                         </div>
@@ -286,7 +286,7 @@ require_once '../includes/header.php';
                 <div class="admin-button-group">
                     <button type="submit" class="btn btn-primary">Save Settings</button>
                     <button type="reset" class="btn btn-outline-secondary">Reset to Defaults</button>
-                    <a href="../dashboard.php" class="btn btn-outline-primary">Back to Dashboard</a>
+                    <a href="../dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
                 </div>
                 
                 <div class="alert alert-warning mt-3">

@@ -19,6 +19,7 @@ KaizenDMS is a PHP-based Document Management System designed for manufacturing e
 - **Backend**: PHP 7.4+ with PDO MySQL
 - **Database**: MySQL with `dms_` prefixed tables
 - **Authentication**: KaizenAuth JWT-based SSO
+- **Access Control**: Advanced RBAC with AdditivePermissionManager
 - **Frontend**: Responsive web interface with Segoe UI typography
 - **API**: RESTful endpoints for integration
 
@@ -54,27 +55,32 @@ cp .env.example .env
 
 ## 📁 Project Structure
 
+**Clean, organized structure for efficient development:**
+
 ```
 KaizenDMS/
-├── src/                           # Application source files
-│   ├── includes/                  # Core classes and utilities
-│   │   ├── database.php          # Database connection
-│   │   ├── kaizen_sso.php        # Authentication
-│   │   └── AccessControl.php     # Authorization
-│   ├── admin/                     # Admin panel
-│   ├── api/                       # REST API endpoints
+├── 📖 docs/                      # Documentation
+│   ├── requirements/             # Requirements & specifications  
+│   ├── implementation/           # Implementation plans & tasks
+│   └── deployment/               # Deployment guides
+├── 💾 src/                       # Application source code
+│   ├── includes/                 # Core classes & utilities
+│   ├── api/                      # REST API endpoints
+│   ├── admin/                    # Admin panel
 │   └── *.php                     # Main application pages
-├── integration/masterdata/        # Archived master data files
-├── web_db_check.php              # Database status checker
-├── web_deploy_tables.php         # Table deployment tool
-├── simple_db_check.php           # Simple diagnostic tool
-└── DEPLOYMENT_GUIDE.md           # Server deployment guide
+├── 🛠️ tools/database/            # Database management tools
+├── 🗄️ database/                  # Schema migrations & seeds
+├── 🧪 tests/                     # Testing framework
+└── 📚 integration/               # External integration research
 ```
+
+**See [FOLDER_STRUCTURE.md](FOLDER_STRUCTURE.md) for complete organization details.**
 
 ## 🗄️ Database Schema
 
-KaizenDMS creates 10 master tables with `dms_` prefix:
+KaizenDMS includes comprehensive data structure with `dms_` prefix:
 
+### Core Master Tables (10)
 | Table | Purpose | Records |
 |-------|---------|---------|
 | `dms_sites` | Site/location management | Sample locations |
@@ -88,7 +94,31 @@ KaizenDMS creates 10 master tables with `dms_` prefix:
 | `dms_notification_templates` | Message templates | WhatsApp/Email templates |
 | `dms_notification_channels` | Communication channels | EMAIL_SMTP, WHATSAPP |
 
+### RBAC System Tables (4)
+| Table | Purpose | Features |
+|-------|---------|----------|
+| `dms_roles` | Role definitions | System roles with hierarchical permissions |
+| `dms_permissions` | Permission catalog | Granular action-based permissions |
+| `dms_role_permissions` | Role-permission mapping | Additive permission model |
+| `dms_user_roles` | User role assignments | Active/inactive status tracking |
+
+**See [DATABASE_STRUCTURE.md](DATABASE_STRUCTURE.md) for complete schema documentation.**
+
 ## 🔧 Development
+
+### RBAC System Status (Latest Update)
+✅ **Integration Complete**: Advanced Role-Based Access Control system implemented
+- **AdditivePermissionManager**: New RBAC engine with scope-based permissions
+- **AccessControl.php**: Enhanced with RBAC integration + legacy fallback
+- **Role Hierarchy**: operator → line_lead → supervisor → engineer → department_owner → pso → system_admin
+- **Permission Scopes**: all > cross_department > department > process_area > station > assigned_only
+- **Backward Compatible**: All legacy authentication flows preserved
+
+### Testing & Validation
+Access comprehensive PDCA testing:
+- **Technical Tests**: `/tools/access_control_pdca_test.php` - System integration validation
+- **Role Management**: `/tools/fix_role_names.php` - Fix missing role names
+- **Conflict Resolution**: `/tools/resolve_role_conflicts.php` - Resolve legacy role conflicts
 
 ### File Change Reporting
 When making changes, always report using relative paths:
@@ -102,8 +132,9 @@ Files Updated:
 ### Security Best Practices
 - All forms use CSRF protection
 - Input validation and sanitization throughout
-- Role-based access checks before operations
+- Advanced RBAC with scope-based permissions
 - Environment-based configuration (no hardcoded credentials)
+- KaizenAuth SSO integration preserved
 
 ## 📖 Documentation
 
